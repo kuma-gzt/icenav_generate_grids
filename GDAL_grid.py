@@ -36,7 +36,7 @@ class GDAL_Processing:
         self.process_geotiffs()
 
         end = time.time()
-        print(f"Elapsed time: {end - start:.2f} seconds")
+        print(f"INFO::Elapsed time: {end - start:.2f} seconds")
 
     def process_geotiffs(self):
         centroids = self.get_centroids()
@@ -48,6 +48,8 @@ class GDAL_Processing:
         lon, lat = arr_l.T
 
         grouped = self.group_files()
+
+        pix_coords = self.get_pixelcoord(grouped[0][0], centroids)
 
         for lst in grouped:
             output_csv = os.path.join(
@@ -62,10 +64,7 @@ class GDAL_Processing:
             tc_min_ = []
             thi_ = []
 
-            pix_coords = self.get_pixelcoord(lst[0])
-
-            for item in lst:
-                print(item)
+            for item in lst:                
                 ds = gdal.Open(item, gdal.GA_ReadOnly)
                 if ds is None:
                     raise RuntimeError(f"Could not open raster: {item}")
@@ -104,6 +103,7 @@ class GDAL_Processing:
             arr_2d = np.column_stack(
                 [x, y, lon, lat, fast, fyi, myi, tc_max, tc_mid, tc_min, thi]
             )
+            
             np.savetxt(
                 output_csv,
                 arr_2d,
@@ -112,6 +112,8 @@ class GDAL_Processing:
                 header="x, y, lon_e6, lat_e6, fast, fyi, myi, tc_max, tc_mid, tc_min, thi",
                 comments="",
             )
+
+            print("INFO::", output_csv)
 
     def get_centroids(self):
         centroids = []
@@ -156,9 +158,7 @@ class GDAL_Processing:
 
         return file_list
 
-    def get_pixelcoord(self, band):
-        centroids = self.get_centroids()
-
+    def get_pixelcoord(self, band, centroids):
         ds = gdal.Open(band, gdal.GA_ReadOnly)
         if ds is None:
             raise RuntimeError(f"Could not open raster: {band}")
@@ -175,11 +175,11 @@ class GDAL_Processing:
             px, py = int(px), int(py)
 
             # Check if within raster bounds
-            if px >= ds.RasterXSize or py >= ds.RasterYSize:
-                print(
-                    f"Skipping point {px},{py}: outside raster extent ({ds.RasterXSize},{ds.RasterYSize})"
-                )
-                continue
+            # if px >= ds.RasterXSize or py >= ds.RasterYSize:
+            #     print(
+            #         f"Skipping point {px},{py}: outside raster extent ({ds.RasterXSize},{ds.RasterYSize})"
+            #     )
+            #     continue
 
             lst.append([px, py])
 

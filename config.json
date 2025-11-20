@@ -1,5 +1,5 @@
 {
-    "centroids": "/home/x/D/projects/20251028_icenav_etc/generate_gridsv2/data/centroids.csv",
+    "centroids": "/home/x/D/projects/20251028_icenav_etc/generate_grids/data/centroids.csv",
     "icedata_dir": "/home/x/D/projects/20251028_icenav_etc/ice_data/nsidc/geotiff_sample/",
-    "output_dir": "/home/x/D/projects/20251028_icenav_etc/generate_gridsv2/output"
+    "output_dir": "/home/x/D/projects/20251028_icenav_etc/generate_grids/output"
 }
